@@ -28,16 +28,9 @@ class LoadMovieData implements FixtureInterface, ContainerAwareInterface
 
     public function load(ObjectManager $manager)
     {
-        //$file = $this->container->getParameter('data_source');
+        $movies = $this->container->get('csv.manager')->read();
+        //readData();
 
-        //$csv = array_map('str_getcsv', file($file));
-
-        //$rows = array_map('AppBundle\DataFixtures\ORM\LoadMovieData::str_getcsv', file($file));
-        //$header = array_shift($rows);
-
-        $movies = $this->readData();
-
-        //var_dump($movies);die;
 
         foreach($movies as $movie){
             $entity = new Movie();
@@ -52,22 +45,4 @@ class LoadMovieData implements FixtureInterface, ContainerAwareInterface
         $manager->flush();
     }
 
-    private function readData()
-    {
-        $source = $this->container->getParameter('data_source');
-        if (($file = fopen($source, "r")) !== FALSE) {
-
-            $headers = fgetcsv($file,1000,';');
-            $movies = array();
-
-            while( $row = fgetcsv($file,1000, ';') )
-            {
-                $movies[$row[0]] = array_combine($headers,$row);
-            }
-
-            fclose($file);
-        }
-
-        return $movies;
-    }
 }
