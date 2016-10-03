@@ -86,5 +86,5 @@ php bin/console doctrine:schema:create --env=test
 
 3. Run the tests:
 ```
-vendor/bin/phpunit tests/AppBundle/Controller/Api/MovieControllerTest.php``********``
+vendor/bin/phpunit tests/AppBundle/Controller/Api/MovieControllerTest.php
 ```
