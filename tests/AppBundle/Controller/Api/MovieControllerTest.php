@@ -25,7 +25,7 @@ class MovieControllerTest extends WebTestCase
             'title' => 'Snatch',
             'date' => '2000-09-01',
             'genre' => 'Comedy',
-            'mainChar' => 'Jason Statham'
+            'mainCharacter' => 'Jason Statham'
         );
 
         $client->request(
@@ -41,7 +41,120 @@ class MovieControllerTest extends WebTestCase
         $this->assertTrue($client->getResponse()->headers->has('Location'));
         $finishedData = json_decode($client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('title', $finishedData);
-        $this->assertEquals('Jason Statham', $data['mainChar']);
+        $this->assertEquals('Jason Statham', $data['mainCharacter']);
+    }
+
+
+    public function testPUTMovie()
+    {
+        $client = static::createClient();
+
+        $container = self::$kernel->getContainer();
+        /** @var EntityManager $em */
+        $em = $container->get('doctrine')->getManager();
+        $movieRepo = $em->getRepository('AppBundle:Movie');
+        $movieRepo->createQueryBuilder('movie')
+            ->delete()
+            ->getQuery()
+            ->execute();
+
+        $movie = new Movie();
+        $movie->setTitle('Jurassic Park');
+        $movie->setDate(new \DateTime('2015-06-11'));
+        $movie->setGenre('Adventure');
+        $movie->setMainCharacter('Chris Pratt');
+
+        $em->persist($movie);
+        $em->flush();
+
+        $data = array(
+            'title' => 'Jurassic World',
+            'date' => '2015-06-11',
+            'genre' => 'Adventure',
+            'mainCharacter' => 'Chris Pratt'
+        );
+
+        $client->request(
+            'PUT',
+            '/api/movies/'.$movie->getId(),
+            array(),
+            array(),
+            array('CONTENT_TYPE' => 'application/json'),
+            json_encode($data)
+        );
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $this->assertEquals('Jurassic World', $data['title']);
+
+    }
+
+    public function testDELETEMovie()
+    {
+        $client = static::createClient();
+
+        /** @var EntityManager $em */
+        $em = self::$kernel->getContainer()->get('doctrine')->getManager();
+        $movieRepo = $em->getRepository('AppBundle:Movie');
+        $movieRepo->createQueryBuilder('movie')
+            ->delete()
+            ->getQuery()
+            ->execute();
+
+        $movie = new Movie();
+        $movie->setTitle('Avatar');
+        $movie->setDate(new \DateTime('2009-12-17'));
+        $movie->setGenre('Fantasy');
+        $movie->setMainCharacter('Sam Worthington');
+
+        $em->persist($movie);
+        $em->flush();
+
+        $client->request('DELETE', '/api/movies/'.$movie->getId());
+        $this->assertEquals(204, $client->getResponse()->getStatusCode());
+    }
+
+    public function testPATCHMovie()
+    {
+        $client = static::createClient();
+
+        $container = self::$kernel->getContainer();
+        /** @var EntityManager $em */
+        $em = $container->get('doctrine')->getManager();
+        $movieRepo = $em->getRepository('AppBundle:Movie');
+        $movieRepo->createQueryBuilder('movie')
+            ->delete()
+            ->getQuery()
+            ->execute();
+
+        $movie = new Movie();
+        $movie->setTitle('Jurassic Park');
+        $movie->setDate(new \DateTime('2015-06-11'));
+        $movie->setGenre('Adventure');
+        $movie->setMainCharacter('Chris Pratt');
+
+        $em->persist($movie);
+        $em->flush();
+
+        $data = array(
+            'title' => 'Jurassic World'
+        );
+
+        $client->request(
+            'PATCH',
+            '/api/movies/'.$movie->getId(),
+            array(),
+            array(),
+            array('CONTENT_TYPE' => 'application/json'),
+            json_encode($data)
+        );
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $this->assertEquals('Jurassic World', $data['title']);
+        $this->assertEquals('2015-06-11', substr($data['date']['date'], 0, 10));
+        $this->assertEquals('Adventure', $data['genre']);
+        $this->assertEquals('Chris Pratt', $data['mainCharacter']);
     }
 
     public function testGETMovie()

@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -18,7 +19,7 @@ class MovieType extends AbstractType
         $builder
             ->add('title')
             ->add('slug')
-            ->add('date', DateType::class)
+            ->add('date', DateTimeType::class)
             ->add('genre')
             ->add('mainCharacter')
         ;

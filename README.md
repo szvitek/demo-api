@@ -38,6 +38,9 @@ Install guide step-by-step:
     ```
     php bin/console doctrine:fixtures:load
     ```
+    
+    This fixture uses a custom service (src/AppBundle/Services/CSVManager.php) which parses a CSV file as the data source. This file is located in 
+    data/datasource.csv file.
 
 6. Run the built in web server
     ```
@@ -62,12 +65,25 @@ API URIs:
 ```
 * GET         /api/movies
 * GET         /api/movies/{id}
+* DELETE      /api/movies/{id}
+* PUT         /api/movies/{id}
+    required parameters:
+    title:          string
+    date:           YYYY-MM-DD
+    genre:          string
+    mainCharacter:   string
+* PATCH         /api/movies/{id}
+    optional parameters:
+    title:          string
+    date:           YYYY-MM-DD
+    genre:          string
+    mainCharacter:   string
 * POST        /api/movies
     required parameters:
-    title:      string
-    date:       YYYY-MM-DD
-    genre:      string
-    mainChar:   string
+    title:          string
+    date:           YYYY-MM-DD
+    genre:          string
+    mainCharacter:  string
        
 ```
 

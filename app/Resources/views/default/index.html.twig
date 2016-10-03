@@ -26,12 +26,28 @@
                         <li>POST /api/movies - create a new movie</li>
                         required parameters:
                             <ul>
-
                                 <li>title:  string</li>
                                 <li>date:  YYYY-MM-DD</li>
                                 <li>genre: string</li>
                                 <li>mainChar: - string</li>
                             </ul>
+                        <li>PUT /api/movies/{id} - update an existing movie by it's id</li>
+                        required parameters:
+                            <ul>
+                                <li>title:  string</li>
+                                <li>date:  YYYY-MM-DD</li>
+                                <li>genre: string</li>
+                                <li>mainChar: - string</li>
+                            </ul>
+                        <li>PATCH /api/movies/{id} - update an existing movie by it's id</li>
+                            optional parameters:
+                            <ul>
+                                <li>title:  string</li>
+                                <li>date:  YYYY-MM-DD</li>
+                                <li>genre: string</li>
+                                <li>mainChar: - string</li>
+                            </ul>
+                        <li>DELETE /api/movies/{id} - delete an existing movie</li>
                     </ul>
                 </div>
             </div>

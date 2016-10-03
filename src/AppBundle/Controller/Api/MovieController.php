@@ -10,11 +10,13 @@ namespace AppBundle\Controller\Api;
 
 
 use AppBundle\Entity\Movie;
+use AppBundle\Form\MovieType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class MovieController extends Controller
 {
@@ -27,16 +29,14 @@ class MovieController extends Controller
         $body = $request->getContent();
         $data = json_decode($body, true);
 
-        $em = $this->getDoctrine()->getManager();
-
         $movie = new Movie();
 
-        $movie->setTitle($data['title']);
+        $form = $this->createForm(MovieType::class, $movie);
+        $form->submit($data);
+
         $movie->setDate(new \DateTime($data['date']));
-        $movie->setGenre($data['genre']);
-        $movie->setMainCharacter($data['mainChar']);
 
-
+        $em = $this->getDoctrine()->getManager();
         $em->persist($movie);
         $em->flush();
 
@@ -85,6 +85,51 @@ class MovieController extends Controller
 
         return new JsonResponse($data);
 
+    }
+
+    /**
+     * @Route("/api/movies/{id}", name="api_movie_update")
+     * @Method({"PUT", "PATCH"})
+     */
+    public function updateAction(Request $request, $id)
+    {
+        $body = $request->getContent();
+        $data = json_decode($body, true);
+        $movie = $this->getDoctrine()->getRepository('AppBundle:Movie')->find($id);
+
+        if (!$movie) {
+            throw $this->createNotFoundException('No movie found for id: '.$id);
+        }
+
+        $form = $this->createForm(MovieType::class, $movie);
+        $clearMissing = $request->getMethod() != 'PATCH';
+        $form->submit($data, $clearMissing);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($movie);
+        $em->flush();
+
+        $data = $this->serializeMovie($movie);
+        $response = new JsonResponse($data, 200);
+
+        return $response;
+    }
+
+    /**
+     * @Route("/api/movies/{id}")
+     * @Method("DELETE")
+     */
+    public function deleteAction($id)
+    {
+        $movie = $this->getDoctrine()->getRepository('AppBundle:Movie')->find($id);
+
+        if ($movie) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($movie);
+            $em->flush();
+        }
+
+        return new Response(null,204);
     }
 
     private function serializeMovie(Movie $movie)
