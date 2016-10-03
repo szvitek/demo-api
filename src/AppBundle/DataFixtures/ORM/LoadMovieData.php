@@ -29,8 +29,6 @@ class LoadMovieData implements FixtureInterface, ContainerAwareInterface
     public function load(ObjectManager $manager)
     {
         $movies = $this->container->get('csv.manager')->read();
-        //readData();
-
 
         foreach($movies as $movie){
             $entity = new Movie();
