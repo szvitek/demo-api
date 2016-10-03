@@ -2,6 +2,14 @@
 
 {% block body %}
     <h1>Movie list</h1>
+    <a class="btn btn-default pull-left" role="button" href="{{ path('homepage') }}">Landing page</a>
+    <a class="btn btn-primary pull-left" role="button" href="{{ path('movie_new') }}">Create new movie</a>
+
+    {#<ul>#}
+        {#<li>#}
+            {#<a class="btn btn-primary" role="button" href="{{ path('movie_new') }}">Create a new entry</a>#}
+        {#</li>#}
+    {#</ul>#}
 
     <table class="table table-striped">
         <thead>
@@ -38,10 +46,4 @@
         {% endfor %}
         </tbody>
     </table>
-
-    <ul>
-        <li>
-            <a href="{{ path('movie_new') }}">Create a new entry</a>
-        </li>
-    </ul>
 {% endblock %}
